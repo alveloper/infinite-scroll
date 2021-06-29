@@ -4,7 +4,7 @@ const SearchBar = () => {
   return (
       <form className="relative text-gray-500">
         <label
-          for="search"
+          htmlFor="search"
           className="absolute inset-y-0 left-0 flex items-center pl-2"
         >
           <svg
@@ -15,9 +15,9 @@ const SearchBar = () => {
             stroke="currentColor"
           >
             <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
             />
           </svg>
