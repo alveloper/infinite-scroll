@@ -1,31 +1,56 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 // import SearchBar from "./SearchBar";
-import axios from 'axios';
+import axios from "axios";
 
 const Main = () => {
   // console.log(process.env.REACT_APP_API_URL); // https://recruit-api.yonple.com/recruit/251825 OK!
-  // 무한 스크롤링 페이지
-  const [page, setPage] = useState(0);
-  // 검색어. 일단은 Main.js 에 놓고 다 만든 다음에 SearchBar.js 따로 옮기기
   const [query, setQuery] = useState("");
   const [posts, setPosts] = useState([]);
+  const [page, setPage] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  const fetchPosts = async (page) => {
+    await axios
+      .get(process.env.REACT_APP_API_URL + `/a-posts`, {
+        params: {
+          page: page,
+        },
+      })
+      .then((response) => {
+        // console.log(response.data); // 확인!
+        setPosts((prevPosts) => [...prevPosts, ...response.data]);
+        setLoading(true);
+      });
+  };
+
+  // page 바뀔 때마다 리렌더링
   useEffect(() => {
-    const getBoard = async () => {
-      await axios
-        .get(process.env.REACT_APP_API_URL + `/a-posts`, {
-          params: {
-            'page': page,
-            'query': query
+    fetchPosts(page);
+  }, [page]);
+
+  const loadMore = () => {
+    setPage((prevPage) => prevPage + 1);
+  };
+  const pageEnd = useRef();
+
+  let num = 1;
+  useEffect(() => {
+    if (loading) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            num++;
+            loadMore(); // 만약 스크롤이 마지막에 닿았다면 이전 페이지넘버에 +1 하기.
+            if (num >= 10) {
+              observer.unobserve(pageEnd.current);
+            }
           }
-        })
-        .then(response => {
-          // console.log(response.data); 
-          setPosts(response.data);
-        })
+        },
+        { threshold: 1 }
+      );
+      observer.observe(pageEnd.current);
     }
-    getBoard();
-  }, [page, query]);
-  
+  }, [loading, num]);
 
   return (
     <>
@@ -79,16 +104,22 @@ const Main = () => {
               />
             </form>
             {/* BOARD */}
-            {posts.map(({ title, content, id }) => {
+            {posts.map((post, index) => {
               return (
-                // 여기다가 <Link to> 를 써야 할까? 모르겠다.
-                <div key={id} className="m-2 transition-all duration-300 transform scale-100 hover:scale-95">
-                  <h3 className="text-lg font-bold leading-snug"> {id}. {title} </h3>
-                  <p className="leading-tight">{content.slice(0, 120)}...</p>
-                  <hr className="my-3 border-gray-200" />
+                <div
+                  key={index}
+                  className="m-2 transition-all duration-300 transform scale-100 hover:scale-95"
+                >
+                  <h3 className="text-lg font-bold leading-snug">
+                    {post.id}. {post.title}
+                  </h3>
+                  <p className="leading-tight">
+                    {post.content.slice(0, 115)}...
+                  </p>
                 </div>
               );
             })}
+            <div ref={pageEnd}></div>
           </div>
         </div>
       </div>
