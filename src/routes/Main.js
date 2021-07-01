@@ -4,12 +4,13 @@ import { Link } from "react-router-dom";
 
 const Main = () => {
   const [query, setQuery] = useState("");
-  
+  const [filteredPosts, setFilteredPosts] = useState([]);
+
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  // 데이터 받아오기
+  // 스크롤링: 페이지마다 데이터 받아오는 함수
   const fetchPosts = async (page) => {
     await axios
       .get(process.env.REACT_APP_API_URL + `/a-posts`, {
@@ -18,13 +19,12 @@ const Main = () => {
         },
       })
       .then((response) => {
-        // console.log(response.data); // 확인!
         setPosts((prevPosts) => [...prevPosts, ...response.data]);
         setLoading(true);
       });
   };
 
-  // 데이터 받아오기. page 바뀔 때마다 리렌더링
+  // 스크롤링: 데이터 받아오기. page 바뀔 때마다 리렌더링
   useEffect(() => {
     fetchPosts(page);
   }, [page]);
@@ -33,7 +33,7 @@ const Main = () => {
     setPage((prevPage) => prevPage + 1);
   };
 
-  // Inersection observer API로 무한 스크롤링하는 기능
+  // 스크롤링: Inersection observer API로 무한 스크롤링하는 기능
   const pageEnd = useRef();
   let num = 1;
   useEffect(() => {
@@ -53,6 +53,24 @@ const Main = () => {
       observer.observe(pageEnd.current);
     }
   }, [loading, num]);
+
+  // https://recruit-api.yonple.com/recruit/251825/a-posts?search=rerum -> rerum 결과만 나옴
+  const fetchFilteredPosts = async (query) => {
+    await axios
+      .get(process.env.REACT_APP_API_URL + `/a-posts`, {
+        params: {
+          search: query,
+        },
+      })
+      .then((response) => {
+        // console.log(response.data) // rerum ok!
+        setFilteredPosts(response.data);
+      });
+  };
+
+  useEffect(() => {
+    fetchFilteredPosts(query);
+  }, [query]);
 
   return (
     <>
@@ -100,40 +118,78 @@ const Main = () => {
                 placeholder="검색어를 입력하세요"
                 onChange={(e) => {
                   setQuery(e.target.value);
-                  // console.log(query) // query 로 input 입력값 들어오는 거 확인함.
+                  console.log(query);
                 }}
                 value={query}
               />
             </form>
             {/* BOARD */}
-            {posts.map((post, index) => {
-              const id = post.id;
-              const title = post.title;
-              const content = post.content;
+            {!query ? (
+              <>
+                {posts.map((post, index) => {
+                  const id = post.id;
+                  const title = post.title;
+                  const content = post.content;
 
-              return (
-                <div
-                  key={index}
-                  className="p-2 transition-all duration-300 transform bg-white hover:bg-gray-50"
-                >
-                  <Link
-                    to={{
-                      pathname: `/post/${id}`,
-                      state: {
-                        title,
-                        content,
-                      },
-                    }}
-                  >
-                    <h3 className="text-lg font-bold leading-snug">
-                      {id}. {title}
-                    </h3>
-                    <p className="leading-tight">{content.slice(0, 120)}...</p>
-                  </Link>
-                </div>
-              );
-            })}
-            <div ref={pageEnd}></div>
+                  return (
+                    <div
+                      key={index}
+                      className="p-2 transition-all duration-300 transform bg-white hover:bg-gray-50"
+                    >
+                      <Link
+                        to={{
+                          pathname: `/post/${id}`,
+                          state: {
+                            title,
+                            content,
+                          },
+                        }}
+                      >
+                        <h3 className="text-lg font-bold leading-snug">
+                          {id}. {title}
+                        </h3>
+                        <p className="leading-tight">
+                          {content.slice(0, 120)}...
+                        </p>
+                      </Link>
+                    </div>
+                  );
+                })}
+                <div ref={pageEnd}></div>
+              </>
+            ) : (
+              <>
+                {filteredPosts.map((post, index) => {
+                  const id = post.id;
+                  const title = post.title;
+                  const content = post.content;
+
+                  return (
+                    <div
+                      key={index}
+                      className="p-2 transition-all duration-300 transform bg-white hover:bg-gray-50"
+                    >
+                      <Link
+                        to={{
+                          pathname: `/post/${id}`,
+                          state: {
+                            title,
+                            content,
+                          },
+                        }}
+                      >
+                        <h3 className="text-lg font-bold leading-snug">
+                          {id}. {title}
+                        </h3>
+                        <p className="leading-tight">
+                          {content.slice(0, 120)}...
+                        </p>
+                      </Link>
+                    </div>
+                  );
+                })}
+              </>
+            )}
           </div>
         </div>
       </div>
