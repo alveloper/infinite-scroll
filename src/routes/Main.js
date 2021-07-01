@@ -73,8 +73,13 @@ const Main = () => {
   };
 
   // 필터링: 쿼리가 변할 때마다 리렌더링
+  // + 선택기능: debounce 
   useEffect(() => {
-    fetchFilteredPosts(query);
+    const timer = setTimeout(() => {
+      fetchFilteredPosts(query);
+    }, 150);
+
+    return () => clearTimeout(timer);
   }, [query]);
 
   return (
