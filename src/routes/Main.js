@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-// import SearchBar from "./SearchBar";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Main = () => {
-  // console.log(process.env.REACT_APP_API_URL); // https://recruit-api.yonple.com/recruit/251825 OK!
   const [query, setQuery] = useState("");
+  
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -105,17 +105,29 @@ const Main = () => {
             </form>
             {/* BOARD */}
             {posts.map((post, index) => {
+              const id = post.id;
+              const title = post.title;
+              const content = post.content;
+              
               return (
                 <div
                   key={index}
-                  className="m-2 transition-all duration-300 transform scale-100 hover:scale-95"
+                  className="p-2 transition-all duration-300 transform bg-white hover:bg-gray-50"
                 >
-                  <h3 className="text-lg font-bold leading-snug">
-                    {post.id}. {post.title}
-                  </h3>
-                  <p className="leading-tight">
-                    {post.content.slice(0, 115)}...
-                  </p>
+                  <Link to={{
+                    pathname: `/post/${id}`,
+                    state: {
+                      title,
+                      content
+                    }
+                  }}>
+                    <h3 className="text-lg font-bold leading-snug">
+                      {id}. {title}
+                    </h3>
+                    <p className="leading-tight">
+                      {content.slice(0, 120)}...
+                    </p>
+                  </Link>
                 </div>
               );
             })}
