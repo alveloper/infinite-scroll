@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
 import SearchBar from "../components/SearchBar";
+import Board from "../components/Board";
 
 const Main = () => {
   const [query, setQuery] = useState("");
@@ -59,7 +59,7 @@ const Main = () => {
     setQuery(newQuery);
   };
 
-  // https://recruit-api.yonple.com/recruit/251825/a-posts?search=rerum -> rerum 결과만 나옴
+  // 필터링: query에 따라 데이터 받아오는 함수
   const fetchFilteredPosts = async (query) => {
     await axios
       .get(process.env.REACT_APP_API_URL + `/a-posts`, {
@@ -68,11 +68,11 @@ const Main = () => {
         },
       })
       .then((response) => {
-        // console.log(response.data) // rerum ok!
         setFilteredPosts(response.data);
       });
   };
 
+  // 필터링: 쿼리가 변할 때마다 리렌더링
   useEffect(() => {
     fetchFilteredPosts(query);
   }, [query]);
@@ -98,71 +98,12 @@ const Main = () => {
             {/* SEARCH BAR */}
             <SearchBar handleQueryChange={handleQueryChange} />
             {/* BOARD */}
-            {!query ? (
-              <>
-                {posts.map((post, index) => {
-                  const id = post.id;
-                  const title = post.title;
-                  const content = post.content;
-                  return (
-                    <div
-                      key={index}
-                      className="p-2 transition-all duration-300 transform bg-white hover:bg-gray-50"
-                    >
-                      <Link
-                        to={{
-                          pathname: `/post/${id}`,
-                          state: {
-                            title,
-                            content,
-                          },
-                        }}
-                      >
-                        <h3 className="text-lg font-bold leading-snug">
-                          {id}. {title}
-                        </h3>
-                        <p className="leading-tight">
-                          {content.slice(0, 120)}...
-                        </p>
-                      </Link>
-                    </div>
-                  );
-                })}
-                <div ref={pageEnd}></div>
-              </>
-            ) : (
-              <>
-                {filteredPosts.map((post, index) => {
-                  const id = post.id;
-                  const title = post.title;
-                  const content = post.content;
-
-                  return (
-                    <div
-                      key={index}
-                      className="p-2 transition-all duration-300 transform bg-white hover:bg-gray-50"
-                    >
-                      <Link
-                        to={{
-                          pathname: `/post/${id}`,
-                          state: {
-                            title,
-                            content,
-                          },
-                        }}
-                      >
-                        <h3 className="text-lg font-bold leading-snug">
-                          {id}. {title}
-                        </h3>
-                        <p className="leading-tight">
-                          {content.slice(0, 120)}...
-                        </p>
-                      </Link>
-                    </div>
-                  );
-                })}
-              </>
-            )}
+            <Board
+              query={query}
+              posts={posts}
+              pageEnd={pageEnd}
+              filteredPosts={filteredPosts}
+            />
           </div>
         </div>
       </div>
