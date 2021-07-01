@@ -9,6 +9,7 @@ const Main = () => {
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
 
+  // 데이터 받아오기
   const fetchPosts = async (page) => {
     await axios
       .get(process.env.REACT_APP_API_URL + `/a-posts`, {
@@ -23,7 +24,7 @@ const Main = () => {
       });
   };
 
-  // page 바뀔 때마다 리렌더링
+  // 데이터 받아오기. page 바뀔 때마다 리렌더링
   useEffect(() => {
     fetchPosts(page);
   }, [page]);
@@ -31,8 +32,9 @@ const Main = () => {
   const loadMore = () => {
     setPage((prevPage) => prevPage + 1);
   };
-  const pageEnd = useRef();
 
+  // Inersection observer API로 무한 스크롤링하는 기능
+  const pageEnd = useRef();
   let num = 1;
   useEffect(() => {
     if (loading) {
@@ -108,25 +110,25 @@ const Main = () => {
               const id = post.id;
               const title = post.title;
               const content = post.content;
-              
+
               return (
                 <div
                   key={index}
                   className="p-2 transition-all duration-300 transform bg-white hover:bg-gray-50"
                 >
-                  <Link to={{
-                    pathname: `/post/${id}`,
-                    state: {
-                      title,
-                      content
-                    }
-                  }}>
+                  <Link
+                    to={{
+                      pathname: `/post/${id}`,
+                      state: {
+                        title,
+                        content,
+                      },
+                    }}
+                  >
                     <h3 className="text-lg font-bold leading-snug">
                       {id}. {title}
                     </h3>
-                    <p className="leading-tight">
-                      {content.slice(0, 120)}...
-                    </p>
+                    <p className="leading-tight">{content.slice(0, 120)}...</p>
                   </Link>
                 </div>
               );

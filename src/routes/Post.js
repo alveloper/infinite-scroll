@@ -3,7 +3,6 @@ import React from "react";
 const Post = (props) => {
   const title = props.location.state.title;
   const content = props.location.state.content;
-  console.log(props);
 
   const goBack = () => {
     props.history.goBack();
