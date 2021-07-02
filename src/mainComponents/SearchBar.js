@@ -1,6 +1,6 @@
 import React from "react";
 
-const SearchBar = ({ handleQueryChange }) => {
+const SearchBar = ({ setQuery }) => {
   return (
     <form className="relative mb-5 text-gray-500">
       <label
@@ -27,7 +27,7 @@ const SearchBar = ({ handleQueryChange }) => {
         type="search"
         className="w-full mt-1 text-black border-gray-300 rounded-md shadow-sm pl-9 focus:border-indigo-400 focus:ring focus:ring-indigo-200 focus:ring-opacity-30"
         placeholder="검색어를 입력하세요"
-        onChange={(event) => handleQueryChange(event.target.value)}
+        onChange={(event) => setQuery(event.target.value)}
       />
     </form>
   );

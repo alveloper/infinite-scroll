@@ -101,7 +101,7 @@ const Main = () => {
               </p>
             </div>
             {/* SEARCH BAR */}
-            <SearchBar handleQueryChange={handleQueryChange} />
+            <SearchBar setQuery={setQuery} />
             {/* BOARD */}
             <Board
               query={query}
