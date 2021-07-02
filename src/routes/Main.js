@@ -106,9 +106,9 @@ const Main = () => {
             <Board
               query={query}
               posts={posts}
-              pageEnd={pageEnd}
               filteredPosts={filteredPosts}
             />
+            <div ref={pageEnd}></div>
           </div>
         </div>
       </div>

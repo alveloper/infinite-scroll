@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Board = ({ query, posts, pageEnd, filteredPosts }) => {
+const Board = ({ query, posts, filteredPosts }) => {
 
   return (
     <>
@@ -33,7 +33,6 @@ const Board = ({ query, posts, pageEnd, filteredPosts }) => {
               </div>
             );
           })}
-          <div ref={pageEnd}></div>
         </>
       ) : (
         <>
