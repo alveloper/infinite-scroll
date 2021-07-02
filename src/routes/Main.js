@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import SearchBar from "../components/SearchBar";
-import Board from "../components/Board";
+import SearchBar from "../mainComponents/SearchBar";
+import Board from "../mainComponents/Board";
 
 const Main = () => {
   const [query, setQuery] = useState("");
