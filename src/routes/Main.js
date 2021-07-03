@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import SearchBar from "../mainComponents/SearchBar";
-import Board from "../mainComponents/Board";
+import Background from "../components/Background";
+import SearchBar from "../components/SearchBar";
+import Board from "../components/Board";
 
 const Main = () => {
   const [query, setQuery] = useState("");
@@ -54,11 +55,6 @@ const Main = () => {
     }
   }, [loading, num]);
 
-  // 필터링: SearchBar.js -> Main.js 로 데이터를 넘기기 위해 사용할 함수.
-  const handleQueryChange = (newQuery) => {
-    setQuery(newQuery);
-  };
-
   // 필터링: query에 따라 데이터 받아오는 함수
   const fetchFilteredPosts = async (query) => {
     await axios
@@ -73,7 +69,7 @@ const Main = () => {
   };
 
   // 필터링: 쿼리가 변할 때마다 리렌더링
-  // + 선택기능: debounce 
+  // + 선택기능: debounce
   useEffect(() => {
     const timer = setTimeout(() => {
       fetchFilteredPosts(query);
@@ -84,34 +80,21 @@ const Main = () => {
 
   return (
     <>
-      {/* FULL BACKGROUND */}
-      <div className="flex items-center justify-center min-h-screen px-5 py-5 bg-gray-100 min-w-screen">
-        {/* PHONE BACKGROUND */}
-        <div
-          className="relative flex overflow-hidden text-gray-800 bg-white shadow-lg rounded-xl"
-          style={{ width: "414px", height: "736px" }}
-        >
-          {/* WRAPPER */}
-          <div className="w-full h-full px-5 pt-6 pb-10 overflow-y-auto bg-white">
-            {/* TITLE AND SHORT DESCRIPTION */}
-            <div className="mb-5 text-right">
-              <h1 className="text-3xl font-bold">Infinite scrolling</h1>
-              <p className="text-sm font-bold text-gray-400">
-                게시물을 검색해보세요
-              </p>
-            </div>
-            {/* SEARCH BAR */}
-            <SearchBar setQuery={setQuery} />
-            {/* BOARD */}
-            <Board
-              query={query}
-              posts={posts}
-              filteredPosts={filteredPosts}
-            />
-            <div ref={pageEnd}></div>
-          </div>
+      <Background>
+        {/* TITLE */}
+        <div className="mb-5 text-right">
+          <h1 className="text-3xl font-bold">Infinite scrolling</h1>
+          <p className="text-sm font-bold text-gray-400">
+            게시물을 검색해보세요
+          </p>
         </div>
-      </div>
+        {/* SEARCH */}
+        <SearchBar setQuery={setQuery} />
+        {/* TABS */}
+        {/* BOARD */}
+        <Board query={query} posts={posts} filteredPosts={filteredPosts} />
+        <div ref={pageEnd}></div>
+      </Background>
     </>
   );
 };
