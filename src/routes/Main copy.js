@@ -3,7 +3,6 @@ import axios from "axios";
 import Background from "../components/Background";
 import SearchBar from "../components/SearchBar";
 import Board from "../components/Board";
-import Tabs from '../components/Tabs';
 
 const Main = () => {
   const [query, setQuery] = useState("");
@@ -11,7 +10,6 @@ const Main = () => {
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [tab, setTab] = useState('a');
 
   // 스크롤링: 페이지마다 데이터 받아오는 함수
   const fetchPosts = async (page) => {
@@ -93,7 +91,6 @@ const Main = () => {
         {/* SEARCH */}
         <SearchBar setQuery={setQuery} />
         {/* TABS */}
-        <Tabs tab={tab} setTab={setTab} />
         {/* BOARD */}
         <Board query={query} posts={posts} filteredPosts={filteredPosts} />
         <div ref={pageEnd}></div>
